@@ -14,7 +14,7 @@ export default function LoginPage(props) {
   const navigateHome = useNavigate();
 
   const [loginForm, setLoginForm] = useState({
-    username: "defaultUser",
+    email: "defaultUser",
     password: "defaultPassword",
     loginSuccess: true,
   });
@@ -54,7 +54,7 @@ export default function LoginPage(props) {
                 <Form.Control
                   type="text"
                   placeholder="아이디"
-                  name="username"
+                  name="email"
                   onChange={formChangeHandler}
                 />
               </Form.Group>
