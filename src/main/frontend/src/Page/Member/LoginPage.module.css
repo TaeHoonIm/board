@@ -1,0 +1,60 @@
+.logo{
+    height : 10rem;
+    width : 40rem;
+    margin : auto;
+    margin-top : 6rem;
+
+    border-color : black;
+
+    text-align: center;
+    font-size : 3rem;
+}
+.card{
+    height : 100%;
+    width  : 40rem;
+    margin : auto;
+
+    border-color :  #7B8EF5;
+}
+.login-guide{
+    color : red;
+    font-size : 0.8rem;
+    margin-left : 0.2rem;
+}
+.login_btn {
+    width: 30rem;
+    margin : auto;
+    display : block;
+
+    background-color : #7B8EF5;
+    border-color : #7B8EF5;
+}
+.login_btn:hover{
+    background-color : white;
+    color : #7B8EF5;
+    border-color : #7B8EF5;
+}
+.login_btn:active{
+    background-color : white !important;
+    color : #7B8EF5 !important;
+    border-color : #7B8EF5 !important;
+}
+.option-wrapper{
+    margin : auto;
+    margin-top : 1rem;
+    width : 30rem;
+    text-align: center;
+
+    border : none;
+
+    color :gray;
+}
+.option{
+    color : gray;
+}
+.option:link{
+    text-decoration:   none;
+}
+.option:hover{
+    color : #7B8EF5;
+}
