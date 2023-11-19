@@ -1,6 +1,6 @@
 package com.example.board.domain.member.service;
 
-import com.example.board.domain.member.dto.request.MemberRegisterDto;
+import com.example.board.domain.member.dto.request.SignUpRequest;
 import com.example.board.domain.member.entity.Gender;
 import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.member.repository.MemberRepository;
@@ -25,7 +25,7 @@ class MemberServiceV0Test {
     @Test
     void signUp_Success() {
 
-        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(
+        SignUpRequest signUpRequest = new SignUpRequest(
                 "test@test.com",
                 "testPassword",
                 "testName",
@@ -34,21 +34,21 @@ class MemberServiceV0Test {
                 Gender.MALE
         );
 
-        memberServiceV0.signUp(memberRegisterDto);
+        memberServiceV0.signUp(signUpRequest);
 
         Member savedMember = memberRepository.findById(1L).get();
 
-        assertEquals(memberRegisterDto.email(), savedMember.getEmail());
-        assertEquals(memberRegisterDto.password(), savedMember.getPassword());
-        assertEquals(memberRegisterDto.name(), savedMember.getName());
-        assertEquals(memberRegisterDto.nickname(), savedMember.getNickname());
-        assertEquals(memberRegisterDto.birth(), savedMember.getBirth());
-        assertEquals(memberRegisterDto.gender(), savedMember.getGender());
+        assertEquals(signUpRequest.email(), savedMember.getEmail());
+        assertEquals(signUpRequest.password(), savedMember.getPassword());
+        assertEquals(signUpRequest.name(), savedMember.getName());
+        assertEquals(signUpRequest.nickname(), savedMember.getNickname());
+        assertEquals(signUpRequest.birth(), savedMember.getBirth());
+        assertEquals(signUpRequest.gender(), savedMember.getGender());
     }
 
     @Test
     void signUp_Fail_DuplicatedEmail() {
-        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(
+        SignUpRequest signUpRequest = new SignUpRequest(
                 "test@test.com",
                 "testPassword",
                 "testName",
@@ -57,9 +57,9 @@ class MemberServiceV0Test {
                 Gender.MALE
         );
 
-        memberServiceV0.signUp(memberRegisterDto);
+        memberServiceV0.signUp(signUpRequest);
 
-        MemberRegisterDto memberRegisterDto2 = new MemberRegisterDto(
+        SignUpRequest signUpRequest2 = new SignUpRequest(
                 "test@test.com",
                 "testPassword2",
                 "testName2",
@@ -68,12 +68,12 @@ class MemberServiceV0Test {
                 Gender.FEMALE
         );
 
-        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(memberRegisterDto2));
+        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(signUpRequest2));
     }
 
     @Test
     void signUp_Fail_DuplicatedNickname() {
-        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(
+        SignUpRequest signUpRequest = new SignUpRequest(
                 "test@test.com",
                 "testPassword",
                 "testName",
@@ -82,9 +82,9 @@ class MemberServiceV0Test {
                 Gender.MALE
         );
 
-        memberServiceV0.signUp(memberRegisterDto);
+        memberServiceV0.signUp(signUpRequest);
 
-        MemberRegisterDto memberRegisterDto2 = new MemberRegisterDto(
+        SignUpRequest signUpRequest2 = new SignUpRequest(
                 "test2@test.com",
                 "testPassword2",
                 "testName2",
@@ -93,6 +93,6 @@ class MemberServiceV0Test {
                 Gender.FEMALE
         );
 
-        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(memberRegisterDto2));
+        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(signUpRequest2));
     }
 }

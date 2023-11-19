@@ -1,6 +1,7 @@
 package com.example.board.domain.member.service;
 
-import com.example.board.domain.member.dto.request.MemberRegisterDto;
+import com.example.board.domain.member.dto.request.SignUpRequest;
+import com.example.board.domain.member.dto.response.SignUpResponse;
 import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,16 @@ public class MemberServiceV0 implements MemberService {
     private MemberRepository memberRepository;
 
     @Override
-    public void signUp(MemberRegisterDto memberRegisterDto) {
-        Member newMember = memberRegisterDto.toEntity();
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+        Member newMember = signUpRequest.toEntity();
 
         duplicateEmailCheck(newMember.getEmail());
         duplicateNicknameCheck(newMember.getNickname());
 
         newMember.addRole();
         memberRepository.save(newMember);
+
+        return new SignUpResponse(newMember.getEmail(), newMember.getNickname());
     }
 
     @Override

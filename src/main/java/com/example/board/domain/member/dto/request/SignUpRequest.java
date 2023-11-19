@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-public record MemberRegisterDto (
+public record SignUpRequest(
         @Email(message = "이메일 형식이 아닙니다.")
         String email,
         @NotBlank(message = "비밀번호를 입력해주세요.")
