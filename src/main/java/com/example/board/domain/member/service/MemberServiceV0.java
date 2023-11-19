@@ -17,17 +17,26 @@ public class MemberServiceV0 implements MemberService {
     @Override
     public void signUp(MemberRegisterDto memberRegisterDto) {
         Member newMember = memberRegisterDto.toEntity();
+
+        duplicateEmailCheck(newMember.getEmail());
+        duplicateNicknameCheck(newMember.getNickname());
+
         newMember.addRole();
         memberRepository.save(newMember);
     }
 
     @Override
     public void duplicateEmailCheck(String email) {
-
+        if(memberRepository.existsByEmail(email)) {
+            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        }
     }
 
     @Override
     public void duplicateNicknameCheck(String nickname) {
-
+        if(memberRepository.existsByNickname(nickname)) {
+            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+        }
     }
+
 }

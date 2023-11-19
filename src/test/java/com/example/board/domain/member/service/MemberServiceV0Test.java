@@ -45,4 +45,54 @@ class MemberServiceV0Test {
         assertEquals(memberRegisterDto.birth(), savedMember.getBirth());
         assertEquals(memberRegisterDto.gender(), savedMember.getGender());
     }
+
+    @Test
+    void signUp_Fail_DuplicatedEmail() {
+        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(
+                "test@test.com",
+                "testPassword",
+                "testName",
+                "testNickname",
+                "990315",
+                Gender.MALE
+        );
+
+        memberServiceV0.signUp(memberRegisterDto);
+
+        MemberRegisterDto memberRegisterDto2 = new MemberRegisterDto(
+                "test@test.com",
+                "testPassword2",
+                "testName2",
+                "testNickname2",
+                "990101",
+                Gender.FEMALE
+        );
+
+        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(memberRegisterDto2));
+    }
+
+    @Test
+    void signUp_Fail_DuplicatedNickname() {
+        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(
+                "test@test.com",
+                "testPassword",
+                "testName",
+                "testNickname",
+                "990315",
+                Gender.MALE
+        );
+
+        memberServiceV0.signUp(memberRegisterDto);
+
+        MemberRegisterDto memberRegisterDto2 = new MemberRegisterDto(
+                "test2@test.com",
+                "testPassword2",
+                "testName2",
+                "testNickname",
+                "990101",
+                Gender.FEMALE
+        );
+
+        assertThrows(RuntimeException.class, () -> memberServiceV0.signUp(memberRegisterDto2));
+    }
 }
