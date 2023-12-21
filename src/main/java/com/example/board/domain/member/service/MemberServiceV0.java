@@ -1,12 +1,19 @@
 package com.example.board.domain.member.service;
 
+import com.example.board.domain.member.dto.request.LogInRequest;
 import com.example.board.domain.member.dto.request.SignUpRequest;
+import com.example.board.domain.member.dto.response.MemberResponse;
 import com.example.board.domain.member.dto.response.SignUpResponse;
 import com.example.board.domain.member.entity.Member;
+import com.example.board.domain.member.exception.DuplicateEmailException;
+import com.example.board.domain.member.exception.DuplicateNickNameException;
+import com.example.board.domain.member.exception.LogInInputInvalidException;
 import com.example.board.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,16 +36,30 @@ public class MemberServiceV0 implements MemberService {
     }
 
     @Override
+    public void login(LogInRequest logInRequest) {
+        Optional<Member> member = memberRepository.findByEmail(logInRequest.email());
+        if(member.isEmpty() || !member.get().getPassword().equals(logInRequest.password())) {
+            throw new LogInInputInvalidException();
+        }
+    }
+
+    @Override
+    public MemberResponse getMemberInfo(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+        return new MemberResponse(member);
+    }
+
+    @Override
     public void duplicateEmailCheck(String email) {
         if(memberRepository.existsByEmail(email)) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new DuplicateEmailException();
         }
     }
 
     @Override
     public void duplicateNicknameCheck(String nickname) {
         if(memberRepository.existsByNickname(nickname)) {
-            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+            throw new DuplicateNickNameException();
         }
     }
 
