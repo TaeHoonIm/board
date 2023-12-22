@@ -32,5 +32,10 @@ public class MemberController {
         return memberService.getMemberInfo(email);
     }
 
+    @DeleteMapping
+    public String deleteMember(@Valid @RequestBody String email) {
+        memberService.deleteMember(email);
+        return "회원 탈퇴 성공";
+    }
 
 }

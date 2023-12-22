@@ -38,15 +38,31 @@ public class MemberServiceV0 implements MemberService {
     @Override
     public void login(LogInRequest logInRequest) {
         Optional<Member> member = memberRepository.findByEmail(logInRequest.email());
-        if(member.isEmpty() || !member.get().getPassword().equals(logInRequest.password())) {
+        if(member==null || !member.get().getPassword().equals(logInRequest.password())) {
             throw new LogInInputInvalidException();
         }
     }
 
     @Override
     public MemberResponse getMemberInfo(String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow();
+        Member member = memberRepository.findByEmail(email).orElse(null);
+
+        if(member == null) {
+            throw new LogInInputInvalidException();
+        }
+
         return new MemberResponse(member);
+    }
+
+    @Override
+    public void deleteMember(String email) {
+        Member member = memberRepository.findByEmail(email).orElse(null);
+
+        if(member == null) {
+            throw new LogInInputInvalidException();
+        }
+
+        memberRepository.delete(member);
     }
 
     @Override
