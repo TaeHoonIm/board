@@ -28,26 +28,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
+                // token을 사용하는 방식이기 때문에 csrf를 disable
                 .csrf().disable()
 
-                // exception handling을 할 때 우리가 만든 클래스로 exception을 핸들링 하도록 합니다.
+                // exception handling을 할 때 우리가 만든 클래스로 exception을 핸들링 하도록 지정
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
-                // h2-console을 위한 설정을 합니다.
+                // h2-console을 위한 설정
                 .and()
                 .headers()
                 .frameOptions()
                 .sameOrigin()
 
-                // 세션을 사용하지 않기 때문에 STATELESS로 설정합니다.
+                // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                // 다음 리퀘스트에 대한 사용권한 체크를 하도록 합니다.
+                // 다음 리퀘스트에 대한 사용권한 체크를 하도록 지정
                 .and()
                 .authorizeRequests() // HttpServletRequest를 사용하는 요청들에 대한 접근제한 설정
                 .requestMatchers("/member/signup").permitAll() // 회원가입은 누구나 접근 가능
