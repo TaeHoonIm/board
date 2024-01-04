@@ -57,7 +57,7 @@ class MemberServiceV0Test {
         Member savedMember = memberRepository.findByEmail(signUpRequest.email()).orElse(null);
 
         assertEquals(signUpRequest.email(), savedMember.getEmail());
-        assertEquals(signUpRequest.password(), savedMember.getPassword());
+        assertNotEquals(signUpRequest.password(), savedMember.getPassword());
         assertEquals(signUpRequest.name(), savedMember.getName());
         assertEquals(signUpRequest.nickname(), savedMember.getNickname());
         assertEquals(signUpRequest.birth(), savedMember.getBirth());

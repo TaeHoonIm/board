@@ -9,12 +9,25 @@ import com.example.board.domain.member.exception.DuplicateEmailException;
 import com.example.board.domain.member.exception.DuplicateNickNameException;
 import com.example.board.domain.member.exception.LogInInputInvalidException;
 import com.example.board.domain.member.repository.MemberRepository;
+import com.example.board.global.config.security.JwtFilter;
+import com.example.board.global.config.security.TokenInfo;
+import com.example.board.global.config.security.TokenProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 public class MemberServiceV0 implements MemberService {
@@ -22,25 +35,41 @@ public class MemberServiceV0 implements MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         Member newMember = signUpRequest.toEntity();
-
+        log.info("newMember: " + newMember);
         duplicateEmailCheck(newMember.getEmail());
         duplicateNicknameCheck(newMember.getNickname());
-
+        newMember.encodePassword(passwordEncoder);
         newMember.addRole();
         memberRepository.save(newMember);
+        log.info("newMember: " + newMember);
 
         return new SignUpResponse(newMember.getEmail(), newMember.getNickname());
     }
 
     @Override
-    public void login(LogInRequest logInRequest) {
-        Optional<Member> member = memberRepository.findByEmail(logInRequest.email());
-        if(member==null || !member.get().getPassword().equals(logInRequest.password())) {
-            throw new LogInInputInvalidException();
-        }
+    public TokenInfo login(LogInRequest logInRequest) {
+        // 인증 토큰 생성
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInRequest.email(), logInRequest.password());
+
+        // authenticate 메소드가 실행될 때 CustomUserDetailsService의 loadUserByUsername 메소드가 실행됨
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // 해당 인증 토큰을 SecurityContext에 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 인증 토큰을 기반으로 JWT 토큰 생성
+        return tokenProvider.createToken(authentication);
     }
 
     @Override

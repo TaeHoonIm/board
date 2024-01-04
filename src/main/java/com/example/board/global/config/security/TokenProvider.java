@@ -30,7 +30,7 @@ public class TokenProvider {
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+            @Value("${jwt.expiration}") long tokenValidityInSeconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
     }
@@ -42,7 +42,7 @@ public class TokenProvider {
     }
 
     // JWT 토큰을 생성하는 메소드
-    public String createToken(Authentication authentication) {
+    public TokenInfo createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -50,13 +50,15 @@ public class TokenProvider {
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
-        // JWT 토큰 생성
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // payload에 email을 넣음
                 .claim(AUTHORITIES_KEY, authorities) // payload에 권한 정보를 넣음
                 .signWith(secretKey, SignatureAlgorithm.HS512) // signature에 들어갈 secret값과 암호화 알고리즘을 넣음
                 .setExpiration(validity) // 만료 시간 설정
                 .compact();
+
+        // JWT 토큰 생성
+        return new TokenInfo("Bearer", accessToken);
     }
 
     // JWT 토큰을 파싱해서 Authentication 객체를 리턴하는 메소드
