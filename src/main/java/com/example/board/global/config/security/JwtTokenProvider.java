@@ -20,15 +20,15 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
-public class TokenProvider {
+public class JwtTokenProvider {
 
-    private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private static final String AUTHORITIES_KEY = "auth";
     private final String secret;
     private final long tokenValidityInMilliseconds;
     private Key secretKey;
 
-    public TokenProvider(
+    public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") long tokenValidityInSeconds) {
         this.secret = secret;

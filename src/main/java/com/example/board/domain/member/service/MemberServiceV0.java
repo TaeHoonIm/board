@@ -9,23 +9,17 @@ import com.example.board.domain.member.exception.DuplicateEmailException;
 import com.example.board.domain.member.exception.DuplicateNickNameException;
 import com.example.board.domain.member.exception.LogInInputInvalidException;
 import com.example.board.domain.member.repository.MemberRepository;
-import com.example.board.global.config.security.JwtFilter;
 import com.example.board.global.config.security.TokenInfo;
-import com.example.board.global.config.security.TokenProvider;
+import com.example.board.global.config.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,7 +33,7 @@ public class MemberServiceV0 implements MemberService {
     private AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Autowired
-    private TokenProvider tokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -69,7 +63,7 @@ public class MemberServiceV0 implements MemberService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 인증 토큰을 기반으로 JWT 토큰 생성
-        return tokenProvider.createToken(authentication);
+        return jwtTokenProvider.createToken(authentication);
     }
 
     @Override

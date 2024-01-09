@@ -13,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,15 +20,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     @Autowired
-    private TokenProvider tokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
@@ -69,7 +66,7 @@ public class SecurityConfig {
 
                 // 다음 리퀘스트에 대한 사용권한 체크를 하도록 지정
                 .and()
-                .authorizeRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한 설정
+                .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한 설정
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/signup")).permitAll() // 회원가입은 누구나 접근 가능
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/login")).permitAll() // 로그인은 누구나 접근 가능
                         .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console, favicon.ico 요청 인증 무시
@@ -78,8 +75,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증된 회원만 접근 가능
                 )
                 .addFilter(corsFilter()) // cors 필터 추가
-                .addFilterBefore(new JwtFilter(tokenProvider),
-                        UsernamePasswordAuthenticationFilter.class) // Filter 실행 순서 지정, 앞의 필터에서 실행이 성공하면 뒤의 필터를 실행하지 않음
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class
+                ) // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다.
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint); // 유효한 자격증명을 제공하지 않고 접근하려 할 때 401 Unauthorized 에러를 리턴할 클래스
 
         return httpSecurity.build();
