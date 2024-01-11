@@ -1,8 +1,10 @@
 package com.example.board.global.config.security;
 
+import com.example.board.domain.member.entity.CustomUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -20,6 +23,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
@@ -46,17 +50,17 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
-
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // payload에 email을 넣음
                 .claim(AUTHORITIES_KEY, authorities) // payload에 권한 정보를 넣음
+                .claim("userId", ((CustomUser) authentication.getPrincipal()).getUserId())
+                .claim("nickname", ((CustomUser) authentication.getPrincipal()).getNickname())
+                .setIssuedAt(new Date()) // 토큰 발행 시간 정보
                 .signWith(secretKey, SignatureAlgorithm.HS512) // signature에 들어갈 secret값과 암호화 알고리즘을 넣음
                 .setExpiration(validity) // 만료 시간 설정
                 .compact();
-
         // JWT 토큰 생성
         return new TokenInfo("Bearer", accessToken);
     }
@@ -72,14 +76,28 @@ public class JwtTokenProvider {
                 .getBody();
 
         // 클레임에서 권한 정보를 빼냄
-        Collection<? extends GrantedAuthority> authorities =
+        Collection<GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-        // 권한 정보를 이용해서 User 객체를 만들어서 리턴
-        User principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        Object userId = claims.get("userId");
+        Object nickname = claims.get("nickname");
+
+        if(userId == null || nickname == null) {
+            throw new InvalidTokenException();
+        }
+
+        // 권한 정보를 이용해서 User 객체를 만들어서 리턴
+        UserDetails principal = new CustomUser(
+                Long.parseLong(userId.toString()),
+                claims.getSubject(),
+                nickname.toString(),
+                "",
+                authorities
+        );
+
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
     // JWT 토큰의 유효성을 검증하는 메소드

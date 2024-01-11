@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +40,14 @@ public class MemberServiceV0 implements MemberService {
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         Member newMember = signUpRequest.toEntity();
-        log.info("newMember: " + newMember);
+
         duplicateEmailCheck(newMember.getEmail());
         duplicateNicknameCheck(newMember.getNickname());
+
         newMember.encodePassword(passwordEncoder);
         newMember.addRole();
+
         memberRepository.save(newMember);
-        log.info("newMember: " + newMember);
 
         return new SignUpResponse(newMember.getEmail(), newMember.getNickname());
     }
@@ -55,13 +55,21 @@ public class MemberServiceV0 implements MemberService {
     @Override
     public TokenInfo login(LogInRequest logInRequest) {
         // 인증 토큰 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInRequest.email(), logInRequest.password());
-
-        // authenticate 메소드가 실행될 때 CustomUserDetailsService의 loadUserByUsername 메소드가 실행됨
+        log.info("logInRequest: " + logInRequest);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                logInRequest.email(),
+                logInRequest.password());
+        log.info("authenticationToken: " + authenticationToken);
+        // AuthenticationManager에게 인증을 요청하면, UserDetailsService가 호출됨
+        // UserDetailsService는 loadUserByUsername 메서드를 통해 UserDetails 객체를 반환
+        // AuthenticationManager는 loadUserByUsername 메서드가 반환한 UserDetails 객체의 비밀번호와 사용자가 입력한 비밀번호를 비교하여 인증 여부를 결정
+        // 인증에 성공하면 Authentication 객체를 반환
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 해당 인증 토큰을 SecurityContext에 저장
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // 인증 토큰을 기반으로 JWT 토큰 생성
         return jwtTokenProvider.createToken(authentication);
     }
@@ -70,7 +78,7 @@ public class MemberServiceV0 implements MemberService {
     public MemberResponse getMemberInfo(String email) {
         Member member = memberRepository.findByEmail(email).orElse(null);
 
-        if(member == null) {
+        if (member == null) {
             throw new LogInInputInvalidException();
         }
 
@@ -81,7 +89,7 @@ public class MemberServiceV0 implements MemberService {
     public void deleteMember(String email) {
         Member member = memberRepository.findByEmail(email).orElse(null);
 
-        if(member == null) {
+        if (member == null) {
             throw new LogInInputInvalidException();
         }
 
@@ -90,14 +98,14 @@ public class MemberServiceV0 implements MemberService {
 
     @Override
     public void duplicateEmailCheck(String email) {
-        if(memberRepository.existsByEmail(email)) {
+        if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
     @Override
     public void duplicateNicknameCheck(String nickname) {
-        if(memberRepository.existsByNickname(nickname)) {
+        if (memberRepository.existsByNickname(nickname)) {
             throw new DuplicateNickNameException();
         }
     }
