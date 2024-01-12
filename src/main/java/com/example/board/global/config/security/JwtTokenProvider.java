@@ -16,8 +16,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -28,21 +31,21 @@ public class JwtTokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private static final String AUTHORITIES_KEY = "auth";
-    private final String secret;
     private final long tokenValidityInMilliseconds;
-    private Key secretKey;
+    private final String secret;
+    private SecretKey secretKey;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") long tokenValidityInSeconds) {
-        this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.secret = secret;
+        this.secretKey = generateSecretKey(secret);
     }
 
-    // 빈이 생성되고 의존성 주입까지 끝낸 후에 secret 값을 Base64 Decode해서 key 변수에 할당
-    public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+    private SecretKey generateSecretKey(String secret){
+        byte[] keyBytes = Base64.getDecoder().decode(secret);
+        return new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 
     // JWT 토큰을 생성하는 메소드
@@ -50,17 +53,20 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
+
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // payload에 email을 넣음
                 .claim(AUTHORITIES_KEY, authorities) // payload에 권한 정보를 넣음
                 .claim("userId", ((CustomUser) authentication.getPrincipal()).getUserId())
                 .claim("nickname", ((CustomUser) authentication.getPrincipal()).getNickname())
                 .setIssuedAt(new Date()) // 토큰 발행 시간 정보
-                .signWith(secretKey, SignatureAlgorithm.HS512) // signature에 들어갈 secret값과 암호화 알고리즘을 넣음
                 .setExpiration(validity) // 만료 시간 설정
+                .signWith(secretKey, SignatureAlgorithm.HS256) // signature에 들어갈 secret값과 암호화 알고리즘을 넣음
                 .compact();
+
         // JWT 토큰 생성
         return new TokenInfo("Bearer", accessToken);
     }

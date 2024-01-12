@@ -55,21 +55,15 @@ public class MemberServiceV0 implements MemberService {
     @Override
     public TokenInfo login(LogInRequest logInRequest) {
         // 인증 토큰 생성
-        log.info("logInRequest: " + logInRequest);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 logInRequest.email(),
                 logInRequest.password());
-        log.info("authenticationToken: " + authenticationToken);
         // AuthenticationManager에게 인증을 요청하면, UserDetailsService가 호출됨
         // UserDetailsService는 loadUserByUsername 메서드를 통해 UserDetails 객체를 반환
         // AuthenticationManager는 loadUserByUsername 메서드가 반환한 UserDetails 객체의 비밀번호와 사용자가 입력한 비밀번호를 비교하여 인증 여부를 결정
         // 인증에 성공하면 Authentication 객체를 반환
-        try {
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
         // 인증 토큰을 기반으로 JWT 토큰 생성
         return jwtTokenProvider.createToken(authentication);
     }

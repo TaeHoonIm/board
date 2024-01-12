@@ -11,7 +11,6 @@ public class CustomUser extends User {
     Long userId;
     String email;
     String nickname;
-    String password;
     Collection<GrantedAuthority> authorities;
 
     public CustomUser(Long userId, String email, String nickname, String password, Collection<GrantedAuthority> authorities) {

@@ -8,7 +8,6 @@ import com.example.board.domain.member.service.MemberServiceV0;
 import com.example.board.global.config.security.TokenInfo;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +27,11 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenInfo> login(@Valid @RequestBody LogInRequest logInRequest) {
+    public ResponseEntity<Object> login(@Valid @RequestBody LogInRequest logInRequest) {
         TokenInfo tokenInfo = memberService.login(logInRequest);
-        return ResponseEntity.ok().header("Authorization", tokenInfo.grantType(), tokenInfo.accessToken()).build();
+        return ResponseEntity.ok()
+                .header("Authorization", tokenInfo.grantType() + " " + tokenInfo.accessToken())
+                .build();
     }
 
     @GetMapping
