@@ -22,7 +22,6 @@ public class MemberController {
 
     @PostMapping("/signup")
     public SignUpResponse signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        log.info("signUpRequest: " + signUpRequest);
         return memberService.signUp(signUpRequest);
     }
 
