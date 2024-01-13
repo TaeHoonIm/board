@@ -8,17 +8,23 @@ import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.member.exception.DuplicateEmailException;
 import com.example.board.domain.member.exception.DuplicateNickNameException;
 import com.example.board.domain.member.exception.LogInInputInvalidException;
+import com.example.board.domain.member.exception.UnableToSendAuthCodeException;
 import com.example.board.domain.member.repository.MemberRepository;
 import com.example.board.global.config.security.TokenInfo;
 import com.example.board.global.config.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -36,6 +42,11 @@ public class MemberServiceV0 implements MemberService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailVerificationServiceImpl emailService;
+
+    private long authCodeExpirationTime = 3 * 60 * 1000; // 인증 코드 만료 시간 (3분)
 
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
@@ -103,5 +114,32 @@ public class MemberServiceV0 implements MemberService {
             throw new DuplicateNickNameException();
         }
     }
+
+    @Override
+    public void sendMessage(String toEmail) {
+        duplicateEmailCheck(toEmail);
+
+        String title = "이메일 인증 번호";
+        String authCode = createAuthCode();
+
+        emailService.SendEmail(toEmail, title, authCode);
+
+    }
+
+    private String createAuthCode() {
+        int authCodeLength = 6;
+        try {
+            Random random = SecureRandom.getInstanceStrong();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < authCodeLength; i++) {
+                stringBuilder.append(random.nextInt(10));
+            }
+            return stringBuilder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            log.debug("MemberService.createAuthCode() exception occur");
+            throw new UnableToSendAuthCodeException();
+        }
+    }
+
 
 }

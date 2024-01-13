@@ -22,6 +22,10 @@ public enum ErrorCode {
     NOT_EXIST_MEMBER(400, "M003", "존재하지 않는 회원입니다."),
     LOGIN_INPUT_INVALID(400, "M004", "이메일 또는 비밀번호가 올바르지 않습니다."),
 
+    // Email
+    UNABLE_TO_SEND_EMAIL(400, "E001", "이메일을 보낼 수 없습니다."),
+    UNABLE_TO_SEND_AUTH_CODE(400, "E002", "인증 코드를 보낼 수 없습니다."),
+
     // Auth
     INVALID_TOKEN(401, "A001", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(401, "A002", "만료된 토큰입니다.");

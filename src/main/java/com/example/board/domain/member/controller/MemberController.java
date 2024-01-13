@@ -20,6 +20,13 @@ public class MemberController {
     @Autowired
     private MemberServiceV0 memberService;
 
+    @PostMapping("/email/verification")
+    public ResponseEntity sendMessage(@RequestParam("email") @Valid String email) {
+        memberService.sendMessage(email);
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/signup")
     public SignUpResponse signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         return memberService.signUp(signUpRequest);
