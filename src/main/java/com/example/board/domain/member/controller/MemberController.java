@@ -5,10 +5,14 @@ import com.example.board.domain.member.dto.request.SignUpRequest;
 import com.example.board.domain.member.dto.response.MemberResponse;
 import com.example.board.domain.member.dto.response.SignUpResponse;
 import com.example.board.domain.member.service.MemberServiceV0;
+import com.example.board.global.config.security.TokenInfo;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/member")
 public class MemberController {
@@ -22,9 +26,11 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @RequestBody LogInRequest logInRequest) {
-        memberService.login(logInRequest);
-        return "로그인 성공";
+    public ResponseEntity<Object> login(@Valid @RequestBody LogInRequest logInRequest) {
+        TokenInfo tokenInfo = memberService.login(logInRequest);
+        return ResponseEntity.ok()
+                .header("Authorization", tokenInfo.grantType() + " " + tokenInfo.accessToken())
+                .build();
     }
 
     @GetMapping
