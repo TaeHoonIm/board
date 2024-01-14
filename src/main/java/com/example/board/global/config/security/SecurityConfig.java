@@ -70,6 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request // HttpServletRequest를 사용하는 요청들에 대한 접근제한 설정
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/signup")).permitAll() // 회원가입은 누구나 접근 가능
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/login")).permitAll() // 로그인은 누구나 접근 가능
+                        .requestMatchers(mvcMatcherBuilder.pattern("/member/email/**")).permitAll() // email 관련 요청은 누구나 접근 가능
                         .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console, favicon.ico 요청 인증 무시
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/**")).hasRole("USER") // member로 시작하는 리퀘스트는 USER 권한이 있어야 접근 가능
                         .requestMatchers(mvcMatcherBuilder.pattern("/admin/**")).hasRole("ADMIN") // admin으로 시작하는 리퀘스트는 ADMIN 권한이 있어야 접근 가능

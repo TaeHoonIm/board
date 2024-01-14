@@ -16,6 +16,8 @@ public interface MemberService {
 
     public void deleteMember(String email);
 
+    public void sendMessage(String email);
+
     public void duplicateEmailCheck(String email);
     public void duplicateNicknameCheck(String nickname);
 
