@@ -6,7 +6,9 @@ import com.example.board.domain.member.repository.MemberRepository;
 import com.example.board.domain.post.dto.request.PostRequest;
 import com.example.board.domain.post.dto.response.PostResponse;
 import com.example.board.domain.post.entity.Post;
+import com.example.board.domain.post.exception.NotExistPostException;
 import com.example.board.domain.post.repository.PostRepository;
+import com.example.board.global.error.exception.HandleAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +33,23 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    public PostResponse deletePost(Long memberId, Long postId) {
+        Member savedMember = getMember(memberId);
+        Post savedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new NotExistPostException());
+
+        if (!savedPost.getMember().equals(savedMember)) {
+            throw new HandleAccessException();
+        }
+        postRepository.delete(savedPost);
+
+        return PostResponse.of(savedPost);
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotExistMemberException());
     }
+
 
 }
