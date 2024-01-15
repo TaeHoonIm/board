@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Local H2 database ###
+data/
+
+### property files ###
+src/main/resources/application-local.properties
