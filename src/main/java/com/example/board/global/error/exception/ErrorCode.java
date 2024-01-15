@@ -21,6 +21,7 @@ public enum ErrorCode {
     DUPLICATE_NICKNAME(400, "M002", "이미 존재하는 닉네임입니다."),
     NOT_EXIST_MEMBER(400, "M003", "존재하지 않는 회원입니다."),
     LOGIN_INPUT_INVALID(400, "M004", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    LOGIN_REQUIRED(401, "M005", "로그인이 필요합니다."),
 
     // Email
     UNABLE_TO_SEND_EMAIL(400, "E001", "이메일을 보낼 수 없습니다."),
