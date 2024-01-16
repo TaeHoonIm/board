@@ -4,6 +4,7 @@ import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.member.exception.NotExistMemberException;
 import com.example.board.domain.member.repository.MemberRepository;
 import com.example.board.domain.post.dto.request.PostRequest;
+import com.example.board.domain.post.dto.response.PostListResponse;
 import com.example.board.domain.post.dto.response.PostResponse;
 import com.example.board.domain.post.entity.Post;
 import com.example.board.domain.post.exception.NotExistPostException;
@@ -11,6 +12,8 @@ import com.example.board.domain.post.repository.PostRepository;
 import com.example.board.global.error.exception.HandleAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,10 +75,16 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    public Page<PostListResponse> getAllPosts(int page, int size) {
+        return postRepository.findAllByOrderByCreatedAtDesc(Pageable.ofSize(size).withPage(page))
+                .map(PostListResponse::of);
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotExistMemberException());
     }
+
 
 
 }

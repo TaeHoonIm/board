@@ -3,10 +3,12 @@ package com.example.board.domain.post.controller;
 import com.example.board.domain.member.entity.CustomUser;
 import com.example.board.domain.member.exception.LoginRequiredException;
 import com.example.board.domain.post.dto.request.PostRequest;
+import com.example.board.domain.post.dto.response.PostListResponse;
 import com.example.board.domain.post.dto.response.PostResponse;
 import com.example.board.domain.post.service.PostServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -47,6 +49,11 @@ public class PostController {
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<Page<PostListResponse>> getAllPosts(@RequestParam int page, @RequestParam int size) {
+        Page<PostListResponse> postListResponses = postService.getAllPosts(page, size);
+        return new ResponseEntity<>(postListResponses, HttpStatus.OK);
+    }
 
     private Long getMemberId(Authentication authentication) {
         if (authentication.getPrincipal() instanceof CustomUser) {
