@@ -3,6 +3,7 @@ package com.example.board.domain.post.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
+@Setter
 public abstract class BaseTimeEntity {
 
     @CreationTimestamp
@@ -17,6 +19,5 @@ public abstract class BaseTimeEntity {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(updatable = true)
     private LocalDateTime updatedAt;
 }

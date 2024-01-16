@@ -46,10 +46,26 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    public PostResponse updatePost(Long memberId, Long postId, PostRequest postRequest) {
+        Member savedMember = getMember(memberId);
+        Post savedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new NotExistPostException());
+
+        if (!savedPost.getMember().equals(savedMember)) {
+            throw new HandleAccessException();
+        }
+
+        Post updatedPost = postRequest.toEntity(savedMember);
+        updatedPost.updatePost(savedPost, updatedPost);
+
+        postRepository.save(updatedPost);
+
+        return PostResponse.of(updatedPost);
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotExistMemberException());
     }
-
 
 }
