@@ -41,6 +41,12 @@ public class PostController {
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long postId) {
+        PostResponse postResponse = postService.getPost(postId);
+        return new ResponseEntity<>(postResponse, HttpStatus.OK);
+    }
+
 
     private Long getMemberId(Authentication authentication) {
         if (authentication.getPrincipal() instanceof CustomUser) {

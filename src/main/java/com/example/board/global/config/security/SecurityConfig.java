@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -71,6 +72,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/signup")).permitAll() // 회원가입은 누구나 접근 가능
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/login")).permitAll() // 로그인은 누구나 접근 가능
                         .requestMatchers(mvcMatcherBuilder.pattern("/member/email/**")).permitAll() // email 관련 요청은 누구나 접근 가능
+                        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/post/**")).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console, favicon.ico 요청 인증 무시
                         .anyRequest().authenticated() // 나머지 요청들은 모두 인증된 회원만 접근 가능
                 )

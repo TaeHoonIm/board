@@ -63,9 +63,19 @@ public class PostServiceImpl {
         return PostResponse.of(updatedPost);
     }
 
+    public PostResponse getPost(Long postId) {
+        Post savedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new NotExistPostException());
+
+        savedPost.increaseViewCount();
+
+        return PostResponse.of(savedPost);
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotExistMemberException());
     }
+
 
 }

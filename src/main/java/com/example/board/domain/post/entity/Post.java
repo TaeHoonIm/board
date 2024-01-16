@@ -3,11 +3,9 @@ package com.example.board.domain.post.entity;
 import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.post.dto.request.PostRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +51,13 @@ public class Post extends BaseTimeEntity {
         this.title = updatedPost.getTitle();
         this.content = updatedPost.getContent();
         this.id = savedPost.getId();
+        this.viewCount = savedPost.getViewCount();
         this.setCreatedAt(savedPost.getCreatedAt());
+        this.setUpdatedAt(LocalDateTime.now());
         return this;
     }
 
-
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 }
