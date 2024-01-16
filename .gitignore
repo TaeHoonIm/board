@@ -37,7 +37,8 @@ out/
 .vscode/
 
 ### Local H2 database ###
-data/
+data.mv.db
+data.trace.db
 
 ### property files ###
 src/main/resources/application-local.properties
