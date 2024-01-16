@@ -66,6 +66,7 @@ public class PostServiceImpl {
         return PostResponse.of(updatedPost);
     }
 
+    @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
         Post savedPost = postRepository.findById(postId)
                 .orElseThrow(() -> new NotExistPostException());
@@ -75,6 +76,7 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    @Transactional(readOnly = true)
     public Page<PostListResponse> getAllPosts(int page, int size) {
         return postRepository.findAllByOrderByCreatedAtDesc(Pageable.ofSize(size).withPage(page))
                 .map(PostListResponse::of);
