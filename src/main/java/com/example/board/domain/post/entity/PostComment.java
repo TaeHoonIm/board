@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +39,12 @@ public class PostComment extends BaseTimeEntity {
     public void setPost(Post post) {
         this.post = post;
         post.getCommentList().add(this);
+    }
+
+    public void updatedPostComment(PostComment savedPostComment, PostComment updatedPostComment) {
+        this.content = updatedPostComment.getContent();
+        this.id = savedPostComment.getId();
+        this.setCreatedAt(savedPostComment.getCreatedAt());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 }

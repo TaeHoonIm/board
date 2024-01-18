@@ -32,7 +32,8 @@ public enum ErrorCode {
     EXPIRED_TOKEN(401, "A002", "만료된 토큰입니다."),
 
     // Post
-    NOT_EXIST_POST(400, "P001", "존재하지 않는 게시글입니다.");
+    NOT_EXIST_POST(400, "P001", "존재하지 않는 게시글입니다."),
+    NOT_EXIST_POST_COMMENT(400, "P002", "존재하지 않는 댓글입니다.");
 
     private final int status;
     private final String code;

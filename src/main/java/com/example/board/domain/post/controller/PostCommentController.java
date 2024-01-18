@@ -8,10 +8,7 @@ import com.example.board.domain.post.service.PostCommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post/comment")
@@ -26,6 +23,17 @@ public class PostCommentController {
     ) {
         Long memberId = getMemberId(authentication);
         PostCommentResponse postCommentResponse = postCommentService.createComment(memberId, postCommentRequest);
+        return ResponseEntity.ok(postCommentResponse);
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<PostCommentResponse> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody PostCommentRequest postCommentRequest,
+            Authentication authentication
+    ) {
+        Long memberId = getMemberId(authentication);
+        PostCommentResponse postCommentResponse = postCommentService.updateComment(memberId, commentId, postCommentRequest);
         return ResponseEntity.ok(postCommentResponse);
     }
 
