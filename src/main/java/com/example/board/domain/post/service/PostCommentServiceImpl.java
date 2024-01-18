@@ -58,7 +58,25 @@ public class PostCommentServiceImpl {
         PostComment updatedPostComment = postCommentRequest.toEntity(savedPostComment.getPost(), savedMember);
         updatedPostComment.updatedPostComment(savedPostComment, updatedPostComment);
 
+        postCommentRepository.save(updatedPostComment);
+
         return PostCommentResponse.of(updatedPostComment);
+    }
+
+    public PostCommentResponse deleteComment(Long memberId, Long commentId) {
+
+        Member savedMember = getMember(memberId);
+
+        if (!savedMember.getId().equals(memberId)) {
+            throw new HandleAccessException();
+        }
+
+        PostComment savedPostComment = postCommentRepository.findById(commentId)
+                .orElseThrow(() -> new NotExistPostCommentException());
+
+        postCommentRepository.delete(savedPostComment);
+
+        return PostCommentResponse.of(savedPostComment);
     }
 
     private Member getMember(Long memberId) {
