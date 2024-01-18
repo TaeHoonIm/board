@@ -87,6 +87,4 @@ public class PostServiceImpl {
                 .orElseThrow(() -> new NotExistMemberException());
     }
 
-
-
 }
