@@ -14,6 +14,8 @@ import com.example.board.domain.post.repository.PostCommentRepository;
 import com.example.board.domain.post.repository.PostRepository;
 import com.example.board.global.error.exception.HandleAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +79,11 @@ public class PostCommentServiceImpl {
         postCommentRepository.delete(savedPostComment);
 
         return PostCommentResponse.of(savedPostComment);
+    }
+
+    public Page<PostCommentResponse> getComments(Long postId, int page, int size) {
+        return postCommentRepository.findAllByPostIdOrderByCreatedAtDesc(postId, Pageable.ofSize(size).withPage(page))
+                .map(PostCommentResponse::of);
     }
 
     private Member getMember(Long memberId) {

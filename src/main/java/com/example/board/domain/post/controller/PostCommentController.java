@@ -6,6 +6,7 @@ import com.example.board.domain.post.dto.request.PostCommentRequest;
 import com.example.board.domain.post.dto.response.PostCommentResponse;
 import com.example.board.domain.post.service.PostCommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ public class PostCommentController {
 
     @PostMapping
     public ResponseEntity<PostCommentResponse> createComment(
-            @RequestBody PostCommentRequest postCommentRequest, Authentication authentication
+            @RequestBody PostCommentRequest postCommentRequest,
+            Authentication authentication
     ) {
         Long memberId = getMemberId(authentication);
         PostCommentResponse postCommentResponse = postCommentService.createComment(memberId, postCommentRequest);
@@ -45,6 +47,16 @@ public class PostCommentController {
         Long memberId = getMemberId(authentication);
         PostCommentResponse postCommentResponse = postCommentService.deleteComment(memberId, commentId);
         return ResponseEntity.ok(postCommentResponse);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<Page<PostCommentResponse>> getComments(
+            @PathVariable Long postId,
+            @RequestParam int page,
+            @RequestParam int size
+            ) {
+        Page<PostCommentResponse> postCommentResponses = postCommentService.getComments(postId, page, size);
+        return ResponseEntity.ok(postCommentResponses);
     }
 
     private Long getMemberId(Authentication authentication) {
