@@ -34,7 +34,7 @@ public class PostComment extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(mappedBy = "postComment", cascade = CascadeType.ALL)
-    private List<CommentPreference> postPreferenceList = new ArrayList<CommentPreference>();
+    private List<PostCommentPreference> postPreferenceList = new ArrayList<PostCommentPreference>();
 
     public void setPost(Post post) {
         this.post = post;
