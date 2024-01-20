@@ -90,6 +90,14 @@ public class PreferenceServiceV0 implements PreferenceService {
         );
     }
 
+    public boolean isPostPreference(Long memberId, Long postId) {
+        return postPreferenceRepository.findByMemberIdAndPostId(memberId, postId).isPresent();
+    }
+
+    public boolean isPostCommentPreference(Long memberId, Long postCommentId) {
+        return postCommentPreferenceRepository.findByMemberIdAndPostCommentId(memberId, postCommentId).isPresent();
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotExistMemberException());
