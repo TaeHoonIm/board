@@ -90,10 +90,12 @@ public class PreferenceServiceV0 implements PreferenceService {
         );
     }
 
+    @Override
     public boolean isPostPreference(Long memberId, Long postId) {
         return postPreferenceRepository.findByMemberIdAndPostId(memberId, postId).isPresent();
     }
 
+    @Override
     public boolean isPostCommentPreference(Long memberId, Long postCommentId) {
         return postCommentPreferenceRepository.findByMemberIdAndPostCommentId(memberId, postCommentId).isPresent();
     }

@@ -19,7 +19,7 @@ public class PreferenceController {
     @Autowired
     private PreferenceService preferenceService;
 
-    @PostMapping("/post")
+    @PostMapping("/post/{postId}")
     ResponseEntity<PreferenceResponse> togglePostPreference(
             @PathVariable Long postId,
             Authentication authentication
@@ -29,7 +29,7 @@ public class PreferenceController {
         return ResponseEntity.ok(preferenceResponse);
     }
 
-    @PostMapping("/post-comment")
+    @PostMapping("/post-comment/{postCommentId}")
     ResponseEntity<PreferenceResponse> togglePostCommentPreference(
             @PathVariable Long postCommentId,
             Authentication authentication
@@ -37,6 +37,26 @@ public class PreferenceController {
         Long memberId = getMemberId(authentication);
         PreferenceResponse preferenceResponse = preferenceService.togglePostCommentPreference(memberId, postCommentId);
         return ResponseEntity.ok(preferenceResponse);
+    }
+
+    @PostMapping("/post/{postId}/exist")
+    ResponseEntity<Boolean> isPostPreference(
+            @PathVariable Long postId,
+            Authentication authentication
+    ) {
+        Long memberId = getMemberId(authentication);
+        Boolean isPostPreference = preferenceService.isPostPreference(memberId, postId);
+        return ResponseEntity.ok(isPostPreference);
+    }
+
+    @PostMapping("/post-comment/{postCommentId}/exist")
+    ResponseEntity<Boolean> isPostCommentPreference(
+            @PathVariable Long postCommentId,
+            Authentication authentication
+    ) {
+        Long memberId = getMemberId(authentication);
+        Boolean isPostCommentPreference = preferenceService.isPostCommentPreference(memberId, postCommentId);
+        return ResponseEntity.ok(isPostCommentPreference);
     }
 
     private Long getMemberId(Authentication authentication) {

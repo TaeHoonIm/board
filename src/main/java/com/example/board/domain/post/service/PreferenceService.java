@@ -8,4 +8,7 @@ public interface PreferenceService {
 
     PreferenceResponse togglePostCommentPreference(Long memberId, Long postCommentId);
 
+    boolean isPostPreference(Long memberId, Long postId);
+
+    boolean isPostCommentPreference(Long memberId, Long postCommentId);
 }
