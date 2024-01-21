@@ -4,6 +4,7 @@ import com.example.board.domain.member.entity.CustomUser;
 import com.example.board.domain.member.entity.Member;
 import com.example.board.domain.member.exception.LogInInputInvalidException;
 import com.example.board.domain.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+@Slf4j
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
@@ -29,7 +31,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 member.getEmail(),
                 member.getNickname(),
                 member.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + member.getRole().toString()))
+                Collections.singleton(new SimpleGrantedAuthority(member.getRole().toString()))
         );
     }
 }

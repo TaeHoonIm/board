@@ -81,6 +81,8 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
+        logger.info("claims: {}", claims);
+
         // 클레임에서 권한 정보를 빼냄
         Collection<GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
