@@ -54,7 +54,7 @@ public class PostCommentController {
             @PathVariable Long postId,
             @RequestParam int page,
             @RequestParam int size
-            ) {
+    ) {
         Page<PostCommentResponse> postCommentResponses = postCommentService.getComments(postId, page, size);
         return ResponseEntity.ok(postCommentResponses);
     }

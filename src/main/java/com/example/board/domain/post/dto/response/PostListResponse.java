@@ -24,8 +24,8 @@ public record PostListResponse(
                 post.getTitle(),
                 post.getMember().getName(),
                 post.getViewCount(),
-                post.getCommentList().size(),
-                post.getPostPreferenceList().size(),
+                post.getCommentList() == null ? 0 : post.getCommentList().size(),
+                post.getPostPreferenceList() == null ? 0 : post.getPostPreferenceList().size(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );

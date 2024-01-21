@@ -29,12 +29,12 @@ public class PostCommentPreference extends BaseTimeEntity {
     public void addPreference(PostComment postComment, Member member) {
         this.postComment = postComment;
         this.member = member;
-        postComment.getPostPreferenceList().add(this);
+        postComment.getPostCommentPreferenceList().add(this);
     }
 
     public void deletePreference(PostComment postComment, Member member) {
         this.postComment = postComment;
         this.member = member;
-        postComment.getPostPreferenceList().remove(this);
+        postComment.getPostCommentPreferenceList().remove(this);
     }
 }

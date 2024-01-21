@@ -8,6 +8,7 @@ public record PostCommentResponse(
         Long id,
         String content,
         String author,
+        int preferenceCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -16,6 +17,8 @@ public record PostCommentResponse(
                 savedPostComment.getId(),
                 savedPostComment.getContent(),
                 savedPostComment.getMember().getNickname(),
+                savedPostComment.getPostCommentPreferenceList() == null ?
+                        0 : savedPostComment.getPostCommentPreferenceList().size(),
                 savedPostComment.getCreatedAt(),
                 savedPostComment.getUpdatedAt()
         );

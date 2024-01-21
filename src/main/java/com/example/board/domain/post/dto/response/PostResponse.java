@@ -12,6 +12,8 @@ public record PostResponse(
         String content,
         String author,
         int viewCount,
+        int commentCount,
+        int preferenceCount,
         LocalDateTime createdDate,
         LocalDateTime updatedDate
 ) {
@@ -24,6 +26,8 @@ public record PostResponse(
                 savedPost.getContent(),
                 savedPost.getMember().getName(),
                 savedPost.getViewCount(),
+                savedPost.getCommentList() == null ? 0 : savedPost.getCommentList().size(),
+                savedPost.getPostPreferenceList() == null ? 0 : savedPost.getPostPreferenceList().size(),
                 savedPost.getCreatedAt(),
                 savedPost.getUpdatedAt()
         );
