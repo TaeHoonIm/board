@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @Transactional
-public class PostServiceImpl {
+public class PostServiceV0 implements PostService {
 
     @Autowired
     private PostRepository postRepository;
@@ -28,6 +28,7 @@ public class PostServiceImpl {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Override
     public PostResponse createPost(Long memberId, PostRequest postRequest) {
         Member savedMember = getMember(memberId);
         Post newPost = postRequest.toEntity(savedMember);
@@ -36,6 +37,7 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    @Override
     public PostResponse deletePost(Long memberId, Long postId) {
         Member savedMember = getMember(memberId);
         Post savedPost = postRepository.findById(postId)
@@ -49,6 +51,7 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    @Override
     public PostResponse updatePost(Long memberId, Long postId, PostRequest postRequest) {
         Member savedMember = getMember(memberId);
         Post savedPost = postRepository.findById(postId)
@@ -66,6 +69,7 @@ public class PostServiceImpl {
         return PostResponse.of(updatedPost);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
         Post savedPost = postRepository.findById(postId)
@@ -76,6 +80,7 @@ public class PostServiceImpl {
         return PostResponse.of(savedPost);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Page<PostListResponse> getAllPosts(int page, int size) {
         return postRepository.findAllByOrderByCreatedAtDesc(Pageable.ofSize(size).withPage(page))

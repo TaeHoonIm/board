@@ -5,7 +5,7 @@ import com.example.board.domain.member.exception.LoginRequiredException;
 import com.example.board.domain.post.dto.request.PostRequest;
 import com.example.board.domain.post.dto.response.PostListResponse;
 import com.example.board.domain.post.dto.response.PostResponse;
-import com.example.board.domain.post.service.PostServiceImpl;
+import com.example.board.domain.post.service.PostServiceV0;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     @Autowired
-    private PostServiceImpl postService;
+    private PostServiceV0 postService;
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest, Authentication authentication) {
