@@ -8,12 +8,14 @@ import com.example.board.domain.post.dto.response.PostListResponse;
 import com.example.board.domain.post.dto.response.PostResponse;
 import com.example.board.domain.post.entity.Post;
 import com.example.board.domain.post.exception.NotExistPostException;
+import com.example.board.domain.post.exception.NotFoundPostException;
 import com.example.board.domain.post.repository.PostRepository;
 import com.example.board.global.error.exception.HandleAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +87,21 @@ public class PostServiceV0 implements PostService {
     public Page<PostListResponse> getAllPosts(int page, int size) {
         return postRepository.findAllByOrderByCreatedAtDesc(Pageable.ofSize(size).withPage(page))
                 .map(PostListResponse::of);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostListResponse> searchPosts(String type, String keyword, int page, int size) {
+        Specification<Post> specification = PostSpecifications.searchByTypeAndKeyword(type, keyword);
+
+        Page<PostListResponse> postListResponses = postRepository.findAll(specification, Pageable.ofSize(size).withPage(page))
+                .map(PostListResponse::of);
+
+        if (postListResponses.isEmpty()) {
+            throw new NotFoundPostException();
+        }
+
+        return postListResponses;
     }
 
     private Member getMember(Long memberId) {

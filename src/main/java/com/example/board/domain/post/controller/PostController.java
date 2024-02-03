@@ -55,6 +55,14 @@ public class PostController {
         return new ResponseEntity<>(postListResponses, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<PostListResponse>> searchPosts(
+            @RequestParam String type, @RequestParam String keyword,
+            @RequestParam int page, @RequestParam int size) {
+        Page<PostListResponse> postListResponses = postService.searchPosts(type, keyword, page, size);
+        return new ResponseEntity<>(postListResponses, HttpStatus.OK);
+    }
+
     private Long getMemberId(Authentication authentication) {
         if (authentication.getPrincipal() instanceof CustomUser) {
             return ((CustomUser) authentication.getPrincipal()).getUserId();

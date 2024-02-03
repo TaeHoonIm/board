@@ -18,11 +18,5 @@ public interface PostService {
 
     Page<PostListResponse> getAllPosts(int page, int size);
 
-    Page<PostListResponse> getPostsByWriter(String writer, int page, int size);
-
-    Page<PostListResponse> getPostsByTitle(String title, int page, int size);
-
-    Page<PostListResponse> getPostsByContent(String content, int page, int size);
-
-    Page<PostListResponse> getPostsByTitleAndContent(String title, String content, int page, int size);
+    Page<PostListResponse> searchPosts(String type, String keyword, int page, int size);
 }
