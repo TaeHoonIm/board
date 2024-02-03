@@ -22,7 +22,7 @@ public record PostListResponse(
                 post.getCategory(),
                 post.getTag(),
                 post.getTitle(),
-                post.getMember().getName(),
+                post.getMember().getNickname(),
                 post.getViewCount(),
                 post.getCommentList() == null ? 0 : post.getCommentList().size(),
                 post.getPostPreferenceList() == null ? 0 : post.getPostPreferenceList().size(),

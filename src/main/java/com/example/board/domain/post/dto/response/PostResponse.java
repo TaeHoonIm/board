@@ -24,7 +24,7 @@ public record PostResponse(
                 savedPost.getTag(),
                 savedPost.getTitle(),
                 savedPost.getContent(),
-                savedPost.getMember().getName(),
+                savedPost.getMember().getNickname(),
                 savedPost.getViewCount(),
                 savedPost.getCommentList() == null ? 0 : savedPost.getCommentList().size(),
                 savedPost.getPostPreferenceList() == null ? 0 : savedPost.getPostPreferenceList().size(),
